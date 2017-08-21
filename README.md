@@ -3,4 +3,4 @@
 ***
 
 - KNN
- - KD tree
+	- KD tree
