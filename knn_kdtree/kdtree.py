@@ -2,19 +2,21 @@ import myutil
 import numpy as np
 
 class KDTree(object):
-	def __init__(self, ):
-		self.root = -1
-		self.parent = null
-		self.leftChild = null
-		self.rightChile = null
+	def __init__():
+		self.tree_root = TreeNode()
 
-	
-	def build_tree(self, input_data, sel_feature):
+	def build_tree(self, input_data, sel_feature, tree_node = None):
 	'''input: 
 	   		array --> samples*features
+	   		selected feature to split
+	   		tree node
 	   output: 
 	   ---------
 	'''
+		#### tree root
+		if tree_node == None:
+			tree_node = self.tree_root
+
 		#### get number of data samples, features, selected column
 		sample_size = input_data.shape[0]
 		feature_size = input_data.shape[1]
@@ -27,14 +29,21 @@ class KDTree(object):
 		left_data = np.array([])
 		right_data = np.array([])
 		for ir in range(sample_size):
-			if input_data_col[ir] == mid_val && self.root == -1:
-				self.root = input_data[ir]
+			if input_data_col[ir] == mid_val and tree_node.root == -1:
+				tree_node.root = input_data[ir]
 			elif input_data_col[ir] < mid_val:
-				np.row_stack(self.left_data, input_data[ir])
+				np.row_stack(tree_node.left_data, input_data[ir])
 			elif input_data_col[ir] > mid_val:
-				np.row_stack(self.right_data, input_data[ir])
+				np.row_stack(tree_node.right_data, input_data[ir])
 
-		return self
+		#### deal with left and right nodes
+		left_node = TreeNode()
+		left_node.parent = tree_node
+		right_node = TreeNode()
+		right_node.parent = tree_node
+		build_tree(left_data, sel_feature+1, left_node)
+		build_tree(right_data, sel_feature+1, right_node)
+
 
 
 
