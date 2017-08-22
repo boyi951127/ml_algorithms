@@ -1,8 +1,8 @@
 
 
 class TreeNode(object):
-	def __init__(self, ):
-		self.root = -1
-		self.parent = null
-		self.leftChild = null
-		self.rightChile = null
+	def __init__(self):
+		self.root = None
+		self.parent = None
+		self.leftChild = None
+		self.rightChild = None
