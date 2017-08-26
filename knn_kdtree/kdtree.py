@@ -7,6 +7,8 @@ class KDTree(object):
 	def __init__(self):
 		self.tree_root = TreeNode()
 		self.level = 0
+		self.search_path = []
+		self.flag = False
 
 	def build_tree(self, input_data, sel_feature, tree_node = None):
 		"""
@@ -32,6 +34,7 @@ class KDTree(object):
 		sample_size = input_data.shape[0]
 		feature_size = input_data.shape[1]
 		input_data_col = input_data[:, sel_feature%feature_size]
+		tree_node.dimension = input_data_col
 
 		#### get middle number of selected feature
 		mid_val = get_median(input_data_col.tolist())
@@ -102,5 +105,64 @@ class KDTree(object):
 
 
 
-	def search_tree(self, ):
-		pass
+	def find_position(self, search_point, tree_node):
+		"""input: 
+		   		array(1*d) : search point
+		   output: 
+		   		array(1*d) : closest point
+		   ---------
+		"""
+		if tree_node.root = None:
+			return
+
+		cur_dim = tree_node.dimension
+		if tree_node.leftChild.root == None and tree_node.rightChild.root == None:
+			self.flag = True
+			self.search_path.append(tree_node)
+		elif search_point[1, cur_dim] >= tree_node.root[cur_dim]:
+			self.find_position(search_point, tree_node.rightChild)
+		elif search_point[1, cur_dim] < tree_node.root[cur_dim]:
+			self.find_position(search_point, tree_node.leftChild)
+
+
+
+	def search_neighbor(self, search_point):
+		"""input: 
+		  		array(1*d) : search point
+		   output: 
+		   ---------
+		"""
+
+		self.search_path
+		self.tree_root
+		t_n = self.search_path.pop()
+		min_dist = eucli_distance(search_point.tolist(), t_n.root.tolist())
+		min_dist_pnt = t_n.root
+		while(len(self.search_path) != 0):
+			t_n = self.search_path.pop()
+			if t_n.root = None:
+				continue
+			cur_dist = eucli_distance(search_point.tolist(), t_n.root.tolist())
+			if cur_dist < min_dist:
+				min_dist = cur_dist
+				min_dist_pnt = t_n.root
+				if search_point[1, t_n.dimension] >= t_n.root[t_n.dimension]:
+					self.search_path.append(t_n.leftChild)
+				elif search_point[1, t_n.dimension] < t_n.root[t_n.dimension]:
+					self.search_path.append(t_n.rightChild)
+			# elif eucli_distance(search_point.tolist(), t_n.root.tolist()) >= min_dist:
+			# 	continue
+
+		return min_dist, min_dist_pnt.reshape(min_dist_pnt, search_point.shape)
+
+
+
+
+			
+
+
+
+
+
+
+
