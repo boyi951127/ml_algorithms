@@ -6,3 +6,4 @@ class TreeNode(object):
 		self.parent = None
 		self.leftChild = None
 		self.rightChild = None
+		self.dimension = None
