@@ -7,3 +7,4 @@ class TreeNode(object):
 		self.leftChild = None
 		self.rightChild = None
 		self.dimension = None
+		self.isempty = True
