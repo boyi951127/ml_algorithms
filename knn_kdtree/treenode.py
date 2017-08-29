@@ -8,3 +8,4 @@ class TreeNode(object):
 		self.rightChild = None
 		self.dimension = None
 		self.isempty = True
+		self.isfound = False
