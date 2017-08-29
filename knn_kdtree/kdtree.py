@@ -142,12 +142,16 @@ class KDTree(object):
 
 
 
-	def search_neighbor(self, search_point):
+	def search_neighbor(self, search_point, neighbor_number = 1):
 		"""input: 
-		  		array(1*d) : search point
+		  		array(1*d) : search point, neighbor_number
 		   output: 
-		   		minimum distance & minimum
+		   		[minimum distance] & [minimum point]
 		"""
+
+		if neighbor_number >= self.count:
+			print "the neighbor you want to find is more than exist number!"
+			return
 
 		#### generate the precede points first
 		self.find_position(search_point, self.tree_root)
@@ -156,26 +160,52 @@ class KDTree(object):
 			print i.root
 		# print self.search_path
 
-		t_n = self.search_path.pop()
-		min_dist = eucli_distance(search_point[0].tolist(), t_n.root.tolist())
-		min_dist_pnt = t_n.root
-		while(len(self.search_path) != 0):
-			t_n = self.search_path.pop()
-			if t_n.isempty == True:
-				continue
-			cur_dist = eucli_distance(search_point[0].tolist(), t_n.root.tolist())
-			if cur_dist < min_dist:
-				min_dist = cur_dist
-				min_dist_pnt = t_n.root
-				if search_point[0, t_n.dimension] >= t_n.root[t_n.dimension]:
-					self.search_path.append(t_n.leftChild)
-				elif search_point[0, t_n.dimension] < t_n.root[t_n.dimension]:
-					self.search_path.append(t_n.rightChild)
-			# elif eucli_distance(search_point.tolist(), t_n.root.tolist()) >= min_dist:
-			# 	continue
-		# print np.array([min_dist_pnt])
-		# print search_point
-		return min_dist, np.array([min_dist_pnt])
+		ret_min_dist = []
+		ret_min_pnt = []
+		recover_node = []
+		while neighbor_number > 0:
+			tmp_search_path = self.search_path[:]
+			neighbor_number = neighbor_number - 1
+			t_n = tmp_search_path.pop()
+			min_dist = eucli_distance(search_point[0].tolist(), t_n.root.tolist())
+			# min_dist_pnt = t_n.root
+			min_node = t_n
+			while(len(tmp_search_path) != 0):
+				t_n = tmp_search_path.pop()
+				if t_n.isempty == True:
+					continue
+				cur_dist = eucli_distance(search_point[0].tolist(), t_n.root.tolist())
+				
+				#### judge whether the node has been included in the nearest point
+				if min_node.isfound == True:
+					min_dist = cur_dist
+					# min_dist_pnt = t_n.root
+					min_node = t_n
+				else if cur_dist.isfound == False:
+					if cur_dist < min_dist:
+						min_dist = cur_dist
+						# min_dist_pnt = t_n.root
+						min_node = t_n
+						# min_node.isfound = True
+						if search_point[0, t_n.dimension] >= t_n.root[t_n.dimension]:
+							tmp_search_path.append(t_n.leftChild)
+						elif search_point[0, t_n.dimension] < t_n.root[t_n.dimension]:
+							tmp_search_path.append(t_n.rightChild)
+					# elif eucli_distance(search_point.tolist(), t_n.root.tolist()) >= min_dist:
+					# 	continue
+			# print np.array([min_dist_pnt])
+			# print search_point
+			min_node.isfound = True
+			recover_node.append(min_node)
+			ret_min_dist.append(min_dist)
+			ret_min_pnt.append(np.array([min_node.root]))
+
+
+		#### recover the isfound to False
+		for v in recover_node:
+			v.isfound = False
+
+		return ret_min_dist, ret_min_pnt
 
 
 
