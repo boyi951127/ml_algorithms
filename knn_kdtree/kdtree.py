@@ -150,7 +150,7 @@ class KDTree(object):
 		"""
 
 		if neighbor_number >= self.count:
-			print "the neighbor you want to find is more than exist number!"
+			print "the neighbors you want to find are more than exist number!"
 			return
 
 		#### generate the precede points first
@@ -181,7 +181,7 @@ class KDTree(object):
 					min_dist = cur_dist
 					# min_dist_pnt = t_n.root
 					min_node = t_n
-				else if cur_dist.isfound == False:
+				elif t_n.isfound == False:
 					if cur_dist < min_dist:
 						min_dist = cur_dist
 						# min_dist_pnt = t_n.root
@@ -198,7 +198,7 @@ class KDTree(object):
 			min_node.isfound = True
 			recover_node.append(min_node)
 			ret_min_dist.append(min_dist)
-			ret_min_pnt.append(np.array([min_node.root]))
+			ret_min_pnt.append(min_node.root)
 
 
 		#### recover the isfound to False
