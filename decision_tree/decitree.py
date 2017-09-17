@@ -44,7 +44,7 @@ class DecisionTree:
 		Input:
 			dataset waited to be split: [[], [], ...]
 		Output:
-			optimum split
+			optimum split gain
 		'''
 
 		#### base empirical entropy
@@ -52,30 +52,75 @@ class DecisionTree:
 		
 		sum_samples = len(dataset)
 		max_info_gain = 0
+		max_ind = 0
 
 		#### max_info_gain_div: { v1: [[], []], v2: [[], []], ... }
 		max_info_gain_div = {}
 
-		for i in range(self.labels):
+		for i in range(self.cur_lables):
 
 			#### sub_set: { v1: [[], []], v2: [[], []], ... }
 			sub_set = divide_group(dataset, i)
 			
-			info_gain = 0
+			H_DA = 0
 			for itm in sub_set.values():
-				info_gain -= (len(itm)/sum_samples) * cal_shannon_ent(itm)
+				H_DA -= (len(itm)/sum_samples) * cal_shannon_ent(itm)
+			info_gain = H_D - H_DA
 			if info_gain > max_info_gain:
 				max_info_gain = info_gain
 				max_info_gain_div = sub_set
+				max_ind = i
+		del self.cur_lables[max_ind]
 
 		return max_info_gain, max_info_gain_div
 
 
+	def cal_info_gain_ratio(self, dataset):
+		'''
+		Input:
+			dataset waited to be split: [[], [], ...]
+		Output:
+			optimum split gain
+		'''
+
+		#### base empirical entropy
+		H_D = cal_shannon_ent(dataset)
+		
+		sum_samples = len(dataset)
+		max_info_gain_ratio = 0
+		max_ind = 0
+
+		#### max_info_gain_div: { v1: [[], []], v2: [[], []], ... }
+		max_info_gain_ratio_div = {}
+
+		for i in range(self.cur_lables):
+
+			#### sub_set: { v1: [[], []], v2: [[], []], ... }
+			sub_set = divide_group(dataset, i)
+
+			#### calculate info_gain(IG)
+			H_DA = 0
+			for itm in sub_set.values():
+				H_DA -= (len(itm)/sum_samples) * cal_shannon_ent(itm)
+			info_gain = H_D - H_DA
+
+			#### calculate penalty denominator
+			iv = 0
+			for itm in sub_set.values():
+				p = len(itm) / sum_samples
+				iv -= p * math.log(p, 2)
+
+			info_gain_ratio = info_gain / iv
+			if info_gain_ratio > max_info_gain_ratio:
+				max_info_gain_ratio = info_gain_ratio
+				max_info_gain_ratio_div = sub_set
+				max_ind = i
+		del self.cur_lables[max_ind]
+
+	return max_info_gain_ratio, max_info_gain_ratio_div
 
 
 
-
-	def cal_info_gain_ratio:
 
 	def ID3_create_tree:
 
