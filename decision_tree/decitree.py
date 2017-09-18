@@ -11,7 +11,8 @@ class DecisionTree:
 		self.dataset = dataset
 		self.cur_dataset = self.dataset[:]
 		self.labels = labels
-		self.cur_lables = self.labels[:]
+		self.count_label = len(labels)
+		# self.cur_lables = self.labels[:]
 		self.sample_number = len(dataset)
 		if self.sample_number:
 			self.feature_number = len(dataset[0]) - 1
@@ -59,7 +60,11 @@ class DecisionTree:
 		#### max_info_gain_div: { v1: [[], []], v2: [[], []], ... }
 		max_info_gain_div = {}
 
-		for i in range(self.cur_lables):
+		for i in range(self.lables):
+
+			#### this label has been used
+			if self.lables[i] == -1:
+				continue
 
 			#### sub_set: { v1: [[], []], v2: [[], []], ... }
 			sub_set = divide_group(dataset, i)
@@ -72,7 +77,9 @@ class DecisionTree:
 				max_info_gain = info_gain
 				max_info_gain_div = sub_set
 				max_ind = i
-		del self.cur_lables[max_ind]
+		# del self.cur_lables[max_ind]
+		self.labels[max_ind] = -1
+		self.count_label -= 1
 
 		return max_ind, max_info_gain_div
 
@@ -98,6 +105,10 @@ class DecisionTree:
 
 		for i in range(self.cur_lables):
 
+			#### this label has been used
+			if self.lables[i] == -1:
+				continue
+
 			#### sub_set: { v1: [[], []], v2: [[], []], ... }
 			sub_set = divide_group(dataset, i)
 
@@ -118,9 +129,11 @@ class DecisionTree:
 				max_info_gain_ratio = info_gain_ratio
 				max_info_gain_ratio_div = sub_set
 				max_ind = i
-		del self.cur_lables[max_ind]
+		# del self.cur_lables[max_ind]
+		self.labels[max_ind] = -1
+		self.count_label -= 1
 
-	return max_ind, max_info_gain_ratio_div
+		return max_ind, max_info_gain_ratio_div
 
 
 
@@ -135,7 +148,7 @@ class DecisionTree:
 			return [dataset[0][-1]]
 
 		max_cnt = 0
-		if len(self.cur_lables) == 0:
+		if len(self.count_label) == 0:
 			#### no feature to split
 			for one in st:
 				cnt = lst.count(one)
@@ -144,13 +157,40 @@ class DecisionTree:
 					max_label = one
 			return [one]
 
-		
-
+		#### can still be divided
 		ind, divgrp = self.cal_info_gain(dataset)
-
+		node.setdefault(self.labels[ind], {})
+		for key in divgrp.keys():
+			node[self.labels[ind]].setdefault(key, ID3_create_tree(divgrp[key]))
+		return node
 
 
 	def C45_create_tree:
+		node = {}
+		lst = [dataset[i][-1] for i in range(len(dataset))]
+		st = (set)lst
+
+		if len(st) == 1:
+			#### all samples in dataset belong to the same class
+			return [dataset[0][-1]]
+
+		max_cnt = 0
+		if len(self.count_label) == 0:
+			#### no feature to split
+			for one in st:
+				cnt = lst.count(one)
+				if cnt > max_cnt:
+					max_cnt = cnt
+					max_label = one
+			return [one]
+
+		#### can still be divided
+		ind, divgrp = self.cal_info_gain_ratio(dataset)
+		node.setdefault(self.labels[ind], {})
+		for key in divgrp.keys():
+			node[self.labels[ind]].setdefault(key, ID3_create_tree(divgrp[key]))
+		return node
+
 
 	def CART_create_tree:
 
