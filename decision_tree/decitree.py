@@ -2,7 +2,7 @@ import math
 
 class DecisionTree:
 
-	def __init__(self, dataset, labels):
+	def __init__(self, dataset, labels, epsinon=0.0):
 		'''
 		Input:
 			dataset = [[feature1, feature2, feature3..., output], ...]
@@ -17,6 +17,7 @@ class DecisionTree:
 			self.feature_number = len(dataset[0]) - 1
 		else:
 			self.feature_number = 0
+		self.epsinon = epsinon
 
 	def cal_shannon_ent(self, subset):
 		'''
@@ -45,6 +46,7 @@ class DecisionTree:
 			dataset waited to be split: [[], [], ...]
 		Output:
 			optimum split gain
+			optimum split gain index
 		'''
 
 		#### base empirical entropy
@@ -72,7 +74,7 @@ class DecisionTree:
 				max_ind = i
 		del self.cur_lables[max_ind]
 
-		return max_info_gain, max_info_gain_div
+		return max_ind, max_info_gain_div
 
 
 	def cal_info_gain_ratio(self, dataset):
@@ -81,6 +83,7 @@ class DecisionTree:
 			dataset waited to be split: [[], [], ...]
 		Output:
 			optimum split gain
+			optimum split gain index
 		'''
 
 		#### base empirical entropy
@@ -117,12 +120,35 @@ class DecisionTree:
 				max_ind = i
 		del self.cur_lables[max_ind]
 
-	return max_info_gain_ratio, max_info_gain_ratio_div
+	return max_ind, max_info_gain_ratio_div
 
 
 
 
-	def ID3_create_tree:
+	def ID3_create_tree(self, dataset):
+		node = {}
+		lst = [dataset[i][-1] for i in range(len(dataset))]
+		st = (set)lst
+
+		if len(st) == 1:
+			#### all samples in dataset belong to the same class
+			return [dataset[0][-1]]
+
+		max_cnt = 0
+		if len(self.cur_lables) == 0:
+			#### no feature to split
+			for one in st:
+				cnt = lst.count(one)
+				if cnt > max_cnt:
+					max_cnt = cnt
+					max_label = one
+			return [one]
+
+		
+
+		ind, divgrp = self.cal_info_gain(dataset)
+
+
 
 	def C45_create_tree:
 
