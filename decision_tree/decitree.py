@@ -145,7 +145,7 @@ class DecisionTree:
 
 		if len(st) == 1:
 			#### all samples in dataset belong to the same class
-			return [dataset[0][-1]]
+			return dataset[0][-1]
 
 		max_cnt = 0
 		if len(self.count_label) == 0:
@@ -155,7 +155,7 @@ class DecisionTree:
 				if cnt > max_cnt:
 					max_cnt = cnt
 					max_label = one
-			return [one]
+			return one
 
 		#### can still be divided
 		ind, divgrp = self.cal_info_gain(dataset)
@@ -193,5 +193,49 @@ class DecisionTree:
 
 
 	def CART_create_tree:
+		pass
 
-	def print_tree:
+
+
+
+
+
+	def get_num_of_leafs(tree):
+		#### calculate the number of leaves of the tree
+		number_of_leaves = 0
+		root = tree.keys()[0]
+		seclayer = tree[root]
+		for key in seclayer.keys():
+			if type(seclayer[key]).__name__ == 'dict':
+				number_of_leaves += get_num_of_leafs(seclayer[key])
+			else:
+				number_of_leaves += 1
+		return number_of_leaves
+
+	def get_tree_depth(tree):
+		#### calculate the depth of the tree
+		max_depth = 0
+		root = tree.keys()[0]
+		seclayer = tree[root]
+		for key in seclayer.keys():
+			if type(seclayer[key]).__name__ == 'dict':
+				depth_of_tree = 1 + get_tree_depth(seclayer[key])
+			else:
+				depth_of_tree = 1
+			if depth_of_tree > max_depth:
+				max_depth = depth_of_tree
+		return max_depth
+
+	# copy online
+	def print_tree(tree):
+		#### to print the tree out like a tree boooooo!
+		fig = plt.figure(1, facecolor='white')  
+	    fig.clf()  
+		axprops = dict(xticks=[], yticks=[])  
+		createPlot.ax1 = plt.subplot(111, frameon=False, **axprops)    #no ticks  
+		plotTree.totalW = float(get_num_of_leafs(tree))#c存储树的宽度  
+		plotTree.totalD = float(get_tree_depth(tree))#存储树的深度。我们使用这两个变量计算树节点的摆放位置  
+		plotTree.xOff = -0.5/plotTree.totalW
+		plotTree.yOff = 1.0
+		plotTree(inTree, (0.5,1.0), '')  
+		plt.show()  
